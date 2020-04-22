@@ -1,0 +1,44 @@
+---
+- name: Install Nginx Plus on RHEL 8
+  hosts: all
+  become: root
+  tasks:
+  - name: Make Nginx Plus ssl cert dir
+    file:
+      path: /etc/ssl/nginx
+      state: directory
+      mode: '0755'
+
+  - name: Install Nginx Plus Customer certs
+    copy:
+      src: "{{ item }}"
+      dest: /etc/ssl/nginx
+      mode: '0644'
+    with_fileglob:
+      - ../certs/nginx*
+
+  - name: Download Nginx Plus Yum for RHEL 8 config
+    get_url:
+      url: https://cs.nginx.com/static/files/nginx-plus-8.repo
+      dest: /etc/yum.repos.d
+      mode: '0440'
+
+  - name: Install Nginx Plus
+    package:
+      name:
+      - ca-certificates
+      - nginx-plus
+      state: latest
+
+  - name: Install Nginx Plus Configs
+    copy:
+      src: "{{ item }}"
+      dest: /etc/nginx/conf.d
+      mode: '0644'
+    with_fileglob:
+      - ../configs/nginx/*.conf
+
+  - name: Start service nginx, if not started or reload
+    service:
+      name: nginx
+      state: reloaded

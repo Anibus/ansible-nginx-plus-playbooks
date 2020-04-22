@@ -1,0 +1,11 @@
+#terraform
+*/.terraform
+*.tfstate*
+
+
+#certs and keys
+*.crt
+*.key
+
+#video files
+*.mp4
