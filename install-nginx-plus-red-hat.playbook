@@ -1,7 +1,7 @@
 ---
 - name: Install Nginx Plus on RHEL 8
   hosts: all
-  become: root
+  become: true
   tasks:
   - name: Make Nginx Plus ssl cert dir
     file:
@@ -15,7 +15,7 @@
       dest: /etc/ssl/nginx
       mode: '0644'
     with_fileglob:
-      - ../certs/nginx*
+      - ./certs/nginx*
 
   - name: Download Nginx Plus Yum for RHEL 8 config
     get_url:
@@ -36,9 +36,32 @@
       dest: /etc/nginx/conf.d
       mode: '0644'
     with_fileglob:
-      - ../configs/nginx/*.conf
+      - ./configs/nginx/*.conf
 
   - name: Start service nginx, if not started or reload
+    service:
+      name: nginx
+      state: reloaded
+
+  - name: update firewall - http,https
+    firewalld:
+      service: http
+      permanent: yes
+      state: enabled
+
+  - name: update firewall - http,https
+    firewalld:
+      service: https
+      permanent: yes
+      state: enabled
+
+  - name: update firewall - nginx api, dashboard
+    firewalld:
+      port: 8080/tcp
+      permanent: yes
+      state: enabled
+
+  - name: Start service firewalld, if not started or reload
     service:
       name: nginx
       state: reloaded
