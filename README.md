@@ -12,5 +12,5 @@ Author: James Jones <jam.jones@nginx.com>
 1. Clone repo
 2. Copy your Nginx Plus customer cert and key to './certs'
 
-### To Run a Playbook
-  Execute command: `ansible-playbook -i ./configs/ansible/nodes.conf <playbook>`
+### Build Images
+  Execute command: make <image-type>

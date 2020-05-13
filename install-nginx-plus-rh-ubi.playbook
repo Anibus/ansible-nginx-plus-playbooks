@@ -1,0 +1,22 @@
+---
+- name: Install Nginx Plus on RHEL
+  hosts: localhost
+  tasks:
+  - name: Make Nginx Plus ssl cert dir
+    file:
+      path: /etc/ssl/nginx
+      state: directory
+      mode: '0755'
+
+  - name: Download Nginx Plus Yum config
+    get_url:
+      url: "https://cs.nginx.com/static/files/nginx-plus-{{ UBI_VERSION }}.repo"
+      dest: /etc/yum.repos.d
+      mode: '0440'
+
+  - name: Install Nginx Plus
+    yum:
+      name:
+      - ca-certificates
+      - nginx-plus
+      state: latest
